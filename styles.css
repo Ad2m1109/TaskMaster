@@ -1,0 +1,158 @@
+body {
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background-color: #f4f4f9;
+    display: flex;
+    justify-content: center;
+    align-items: start;
+    padding: 20px;
+}
+
+.container {
+    background: #fff;
+    padding: 30px;
+    border-radius: 14px;
+    box-shadow: 0 8px 16px rgba(0, 0, 0, 0.1);
+    width: 600px; /* Increased width for larger container */
+    max-width: 100%;
+    margin: auto;
+}
+
+@media (max-width: 400px) {
+    .container {
+        width: 90%;
+    }
+}
+
+h1 {
+    text-align: center;
+    color: #2c3e50;
+    margin-bottom: 30px;
+}
+
+.task-input {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 30px;
+}
+
+#new-task {
+    width: 50%; /* Adjusted for better balance with category dropdown */
+    padding: 14px;
+    border: 2px solid #a9b3c1;
+    border-radius: 8px;
+}
+
+#task-category {
+    margin-left: 10px; /* Space between input and category dropdown */
+    padding: 14px;
+    border: 2px solid #a9b3c1;
+    border-radius: 8px;
+}
+
+#task-due-date {
+    margin-left: 10px; /* Space between input and due date */
+    padding: 14px;
+    border: 2px solid #a9b3c1;
+    border-radius: 8px;
+}
+
+#task-priority {
+    margin-left: 10px; /* Space between input and priority dropdown */
+    padding: 14px;
+    border: 2px solid #a9b3c1;
+    border-radius: 8px;
+}
+
+#add-task-btn {
+    padding: 14px 20px;
+    border: none;
+    background-color: #3498db;
+    color: white;
+    border-radius: 8px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for button effect */
+}
+
+#add-task-btn:hover {
+    background-color: #2ecc71;
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+#task-count {
+    font-weight: bold; /* Make the task count stand out */
+    margin-bottom: 10px; /* Space below task count */
+}
+
+#task-list {
+    list-style: none;
+    padding: 0;
+}
+
+.task-item {
+    background: #ecf0f1;
+    padding: 15px;
+    border: 1px solid #bdc3c7;
+    border-radius: 8px;
+    margin-bottom: 15px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+.task-item.completed {
+    background: #d5dbdb; /* Light gray for completed tasks */
+    color: gray; /* Change text color for completed tasks */
+    text-decoration: line-through; /* Strikethrough for completed tasks */
+}
+
+.task-item button {
+    background: #e74c3c;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 6px;
+    cursor: pointer;
+    transition: background-color 0.3s ease, transform 0.2s ease; /* Added transform for button effect */
+}
+
+.task-item button:hover {
+    background: #c0392b;
+    transform: scale(1.05); /* Slightly enlarge button on hover */
+}
+
+/* Dark Mode Styles */
+body.dark-mode {
+    background-color: hwb(210 15% 71%); /* Dark background for dark mode */
+    color: #000000; /* Light text for contrast */
+}
+
+.container.dark-mode {
+    background: hwb(210 20% 63%); /* Darker container for dark mode */
+}
+
+.task-item.dark-mode {
+    background: #4a6572; /* Darker background for task items */
+}
+
+.task-item button.dark-mode {
+    background: #e74c3c; /* Keep button colors consistent in dark mode */
+}
+
+/* Dark Mode Toggle Position */
+#toggle-dark-mode {
+    position: absolute; /* Position it absolutely */
+    top: 20px; /* Adjust top position */
+    left: 20px; /* Adjust left position */
+    padding: 10px 15px; /* Padding for the button */
+    background-color: #3498db; /* Button color */
+    color: white; /* Text color */
+    border: none; /* No border */
+    border-radius: 5px; /* Rounded corners */
+    cursor: pointer; /* Pointer cursor */
+    transition: background-color 0.3s ease; /* Transition effect */
+}
+
+#toggle-dark-mode:hover {
+    background-color: #2ecc71; /* Change color on hover */
+}
