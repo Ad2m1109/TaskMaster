@@ -30,17 +30,18 @@ h1 {
 }
 
 .task-input {
-    display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 30px;
 }
 
 #new-task {
-    width: 50%; /* Adjusted for better balance with category dropdown */
+    display: block;
+    width: 90%; /* Adjusted for better balance with category dropdown */
+    margin: auto;
     padding: 14px;
-    border: 2px solid #a9b3c1;
+    border: 1% solid #a9b3c1;
     border-radius: 8px;
+    margin-bottom: 10px;
 }
 
 #task-category {
@@ -80,10 +81,13 @@ h1 {
 }
 
 #task-count {
+    margin-top: 10px;
     font-weight: bold; /* Make the task count stand out */
     margin-bottom: 10px; /* Space below task count */
 }
-
+#option{
+    text-align: center;
+}
 #task-list {
     list-style: none;
     padding: 0;

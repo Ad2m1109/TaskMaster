@@ -35,7 +35,7 @@ document.addEventListener('DOMContentLoaded', () => {
             <span class="task-category">${category}</span>
             <span class="task-due-date">${dueDate}</span>
             <span class="task-priority">${priority}</span>
-            <button>Delete</button>
+            <button><img src="images/delete.png" width="35px" height="35px" ></button>
         `;
         taskList.appendChild(taskItem);
 
