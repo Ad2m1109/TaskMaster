@@ -1,31 +1,96 @@
 # TaskMaster
 
-TaskMaster is a simple to-do list application that helps users manage tasks effectively. It features task categorization, due dates, priority levels, and dark mode. Users can edit and delete tasks with confirmation, and all tasks are saved in local storage for persistence. Stay organized and on top of your responsibilities with TaskMaster!
+TaskMaster is a modern to-do list application designed to help you manage tasks efficiently. With features like task categorization, due dates, priority levels, filtering, sorting, and a persistent dark mode, TaskMaster keeps you organized. Tasks are saved in your browser’s local storage for seamless persistence.
+
+![alt text](image.png)
 
 ## Features
-- Add, edit, and delete tasks
-- Categorize tasks (General, Work, Personal, Urgent)
-- Set due dates for tasks
-- Assign priority levels (Low, Medium, High)
-- Dark mode for usability in low-light environments
-- Persistent task state using local storage
 
-## Technologies Used
-- HTML
-- CSS
-- JavaScript
+- Add, edit, and delete tasks with confirmation prompts
+- Categorize tasks (General, Work, Personal, Urgent)
+- Set due dates and assign priority levels (Low, Medium, High)
+- Filter tasks by category and sort by due date or priority
+- Clear all tasks with confirmation
+- Toggle dark mode with persistent state
+- Persistent task data using `localStorage`
+- Accessible interface with keyboard support and ARIA attributes
+- Input validation with error messages
+
+## Demo
+
+Try TaskMaster at [https://your-demo-url.com](https://your-demo-url.com/).
+
+## Prerequisites
+
+- A modern web browser (e.g., Google Chrome, Mozilla Firefox, Microsoft Edge)
+- No external dependencies required
+
+## Installation
+
+1. Clone the repository:
+    
+    ```bash
+    git clone https://github.com/your-username/taskmaster.git
+    ```
+    
+2. Navigate to the project directory:
+    
+    ```bash
+    cd taskmaster
+    ```
+    
+3. Open `index.html` in a browser or serve it using a local server (e.g., `npx live-server`).
 
 ## Usage
-- Add a new task by entering the task name, selecting a category, setting a due date, and choosing a priority level.
-- Click the "Add Task" button to save the task.
-- Edit tasks by clicking on the task text and pressing Enter to save changes.
-- Delete tasks with a confirmation prompt.
+
+1. **Add a Task**: Enter a task description, select a category, set a due date (optional), choose a priority, and click "Add Task" or press Enter.
+2. **Edit a Task**: Double-click the task text to edit, then press Enter or click away to save.
+3. **Mark as Complete**: Check the box to mark a task as complete (adds a strikethrough).
+4. **Delete a Task**: Click the trash icon (🗑️) and confirm to delete.
+5. **Filter Tasks**: Use the "Filter by Category" dropdown to show specific categories.
+6. **Sort Tasks**: Use the "Sort by" dropdown to order tasks by due date or priority.
+7. **Clear All Tasks**: Click "Clear All Tasks" and confirm to remove all tasks.
+8. **Toggle Dark Mode**: Click the moon (🌙) or sun (☀️) icon (top-right) to switch themes.
+
+## Development
+
+To develop TaskMaster:
+
+1. Follow the [Installation](https://grok.com/chat/444b6c84-b5ad-4490-99fd-9af135bab264#installation) steps.
+2. Edit `index.html`, `styles.css`, or `script.js`.
+3. Test changes in a browser.
+4. Ensure compatibility with modern browsers and verify accessibility.
+
+**Testing**:
+
+- Manually test task creation, editing, deletion, filtering, sorting, and dark mode.
+- Check accessibility using screen readers (e.g., NVDA, VoiceOver).
+- Verify `localStorage` persistence across page reloads.
 
 ## Contributing
-Contributions are welcome! Please open an issue or submit a pull request for any enhancements or bug fixes.
+
+Contributions are welcome! To contribute:
+
+1. Fork the repository.
+2. Create a branch (`git checkout -b feature/your-feature`).
+3. Commit changes (`git commit -m "Add your feature"`).
+4. Push to the branch (`git push origin feature/your-feature`).
+5. Open a pull request.
+
+Discuss major changes via an issue first. Follow the existing code style and test your changes.
 
 ## License
-This project is licensed under the MIT License. See the LICENSE file for details.
+
+MIT License
+
+Copyright (c) 2025 [Your Name]
+
+See the [LICENSE](https://grok.com/chat/LICENSE) file for details.
+
+## Contact
+
+For questions, contact [Your Name] via [[email@example.com](mailto:email@example.com)] or [GitHub](https://github.com/your-username).
 
 ## Acknowledgments
-Inspired by various task management applications.
+
+Inspired by task management tools like Todoist and Microsoft To Do.

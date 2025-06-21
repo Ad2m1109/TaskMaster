@@ -1,5 +1,5 @@
 document.addEventListener('DOMContentLoaded', () => {
-    const addTaskBtn = document.getElementById('add-task-btn');
+    const taskForm = document.getElementById('task-form');
     const newTaskInput = document.getElementById('new-task');
     const taskCategorySelect = document.getElementById('task-category');
     const taskDueDateInput = document.getElementById('task-due-date');
@@ -7,110 +7,204 @@ document.addEventListener('DOMContentLoaded', () => {
     const taskList = document.getElementById('task-list');
     const taskCount = document.getElementById('task-count');
     const toggleDarkModeBtn = document.getElementById('toggle-dark-mode');
+    const filterCategorySelect = document.getElementById('filter-category');
+    const sortTasksSelect = document.getElementById('sort-tasks');
+    const clearAllBtn = document.getElementById('clear-all-btn');
+    const errorMessage = document.getElementById('error-message');
 
-    // Load tasks from local storage
+    let tasks = [];
+    let editingTaskId = null;
+
+    // Generate UUID for tasks
+    const generateUUID = () => {
+        return 'xxxxxxxx-xxxx-4xxx-yxxx-xxxxxxxxxxxx'.replace(/[xy]/g, c => {
+            const r = Math.random() * 16 | 0, v = c === 'x' ? r : (r & 0x3 | 0x8);
+            return v.toString(16);
+        });
+    };
+
+    // Load tasks and dark mode state
     loadTasks();
+    loadDarkMode();
 
-    addTaskBtn.addEventListener('click', () => {
+    // Form submission
+    taskForm.addEventListener('submit', e => {
+        e.preventDefault();
         const taskText = newTaskInput.value.trim();
         const category = taskCategorySelect.value;
         const dueDate = taskDueDateInput.value;
         const priority = taskPrioritySelect.value;
 
-        if (taskText !== '') {
-            addTask(taskText, category, dueDate, priority);
-            newTaskInput.value = '';
-            taskDueDateInput.value = '';
-            updateTaskCount();
-            saveTaskToLocalStorage(taskText, category, dueDate, priority, false); // Save task to local storage with unchecked state
+        if (taskText === '') {
+            showError('Task description cannot be empty.');
+            return;
         }
+
+        if (editingTaskId) {
+            updateTask(editingTaskId, taskText, category, dueDate, priority);
+            editingTaskId = null;
+        } else {
+            addTask(taskText, category, dueDate, priority);
+        }
+
+        newTaskInput.value = '';
+        taskDueDateInput.value = '';
+        errorMessage.style.display = 'none';
+        saveTasks();
+        renderTasks();
     });
 
-    function addTask(taskText, category, dueDate, priority, isChecked = false) {
-        const taskItem = document.createElement('li');
-        taskItem.className = 'task-item';
-        taskItem.innerHTML = `
-            <input type='checkbox' class='task-checkbox' ${isChecked ? 'checked' : ''}>
-            <span contenteditable="true">${taskText}</span>
-            <span class="task-category">${category}</span>
-            <span class="task-due-date">${dueDate}</span>
-            <span class="task-priority">${priority}</span>
-            <button><img src="images/delete.png" width="35px" height="35px" ></button>
-        `;
-        taskList.appendChild(taskItem);
+    // Add task
+    function addTask(text, category, dueDate, priority, isChecked = false) {
+        const task = {
+            id: generateUUID(),
+            text,
+            category,
+            dueDate,
+            priority,
+            checked: isChecked
+        };
+        tasks.push(task);
+    }
 
-        const deleteBtn = taskItem.querySelector('button');
-        deleteBtn.addEventListener('click', () => {
-            if (confirm('Are you sure you want to delete this task?')) {
-                taskList.removeChild(taskItem);
-                removeTaskFromLocalStorage(taskText); // Remove task from local storage
+    // Update task
+    function updateTask(id, text, category, dueDate, priority) {
+        tasks = tasks.map(task =>
+            task.id === id ? { ...task, text, category, dueDate, priority } : task
+        );
+    }
+
+    // Render tasks
+    function renderTasks() {
+        taskList.innerHTML = '';
+        let filteredTasks = tasks;
+
+        // Filter by category
+        const filterCategory = filterCategorySelect.value;
+        if (filterCategory !== 'All') {
+            filteredTasks = tasks.filter(task => task.category === filterCategory);
+        }
+
+        // Sort tasks
+        const sortOption = sortTasksSelect.value;
+        if (sortOption === 'due-date') {
+            filteredTasks.sort((a, b) => (a.dueDate || '9999-12-31') > (b.dueDate || '9999-12-31') ? 1 : -1);
+        } else if (sortOption === 'priority') {
+            const priorityOrder = { High: 1, Medium: 2, Low: 3 };
+            filteredTasks.sort((a, b) => priorityOrder[a.priority] - priorityOrder[b.priority]);
+        }
+
+        filteredTasks.forEach(task => {
+            const taskItem = document.createElement('li');
+            taskItem.className = `task-item ${task.checked ? 'completed' : ''}`;
+            taskItem.dataset.id = task.id;
+
+            taskItem.innerHTML = `
+                <input type="checkbox" class="task-checkbox" ${task.checked ? 'checked' : ''} aria-label="Mark task as complete">
+                <input type="text" class="task-text" value="${task.text.replace(/"/g, '&quot;')}" readonly aria-label="Task description">
+                <span class="task-category">${task.category}</span>
+                <span class="task-due-date">${task.dueDate || 'No due date'}</span>
+                <span class="task-priority">${task.priority}</span>
+                <button class="delete-btn" aria-label="Delete task">🗑️</button>
+            `;
+
+            taskList.appendChild(taskItem);
+
+            // Checkbox handler
+            const checkbox = taskItem.querySelector('.task-checkbox');
+            checkbox.addEventListener('change', () => {
+                task.checked = checkbox.checked;
+                taskItem.classList.toggle('completed', task.checked);
+                saveTasks();
                 updateTaskCount();
-            }
-        });
+            });
 
-        const checkbox = taskItem.querySelector('.task-checkbox');
-        checkbox.addEventListener('change', () => {
-            if (checkbox.checked) {
-                taskItem.querySelector('span').style.textDecoration = 'line-through';
-                taskItem.classList.add('completed'); // Add a class for completed tasks
-            } else {
-                taskItem.querySelector('span').style.textDecoration = 'none';
-                taskItem.classList.remove('completed'); // Remove the class for uncompleted tasks
-            }
-            updateTaskStateInLocalStorage(taskText, checkbox.checked); // Update checkbox state in local storage
-        });
+            // Edit handler
+            const taskTextInput = taskItem.querySelector('.task-text');
+            taskTextInput.addEventListener('dblclick', () => {
+                taskTextInput.removeAttribute('readonly');
+                taskTextInput.focus();
+            });
+            taskTextInput.addEventListener('blur', saveEdit);
+            taskTextInput.addEventListener('keypress', e => {
+                if (e.key === 'Enter') {
+                    taskTextInput.blur();
+                }
+            });
 
-        // Update task on blur
-        taskItem.querySelector('span[contenteditable="true"]').addEventListener('blur', () => {
-            const updatedText = taskItem.querySelector('span[contenteditable="true"]').innerText;
-            updateTaskInLocalStorage(taskText, updatedText, category, dueDate, priority);
-            taskText = updatedText; // Update the taskText variable
+            function saveEdit() {
+                const newText = taskTextInput.value.trim();
+                if (newText === '') {
+                    alert('Task description cannot be empty.');
+                    taskTextInput.value = task.text;
+                } else {
+                    task.text = newText;
+                    taskTextInput.setAttribute('readonly', true);
+                    saveTasks();
+                }
+            }
+
+            // Delete handler
+            taskItem.querySelector('.delete-btn').addEventListener('click', () => {
+                if (confirm('Are you sure you want to delete this task?')) {
+                    tasks = tasks.filter(t => t.id !== task.id);
+                    saveTasks();
+                    renderTasks();
+                }
+            });
         });
 
         updateTaskCount();
     }
 
+    // Update task count
     function updateTaskCount() {
-        const totalTasks = taskList.children.length;
-        taskCount.textContent = `Total Tasks: ${totalTasks}`;
+        taskCount.textContent = `Total Tasks: ${taskList.children.length}`;
     }
 
-    // Function to save task to local storage
-    function saveTaskToLocalStorage(taskText, category, dueDate, priority, isChecked) {
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        tasks.push({ text: taskText, category: category, dueDate: dueDate, priority: priority, checked: isChecked });
+    // Show error
+    function showError(message) {
+        errorMessage.textContent = message;
+        errorMessage.style.display = 'block';
+    }
+
+    // Save tasks to localStorage
+    function saveTasks() {
         localStorage.setItem('tasks', JSON.stringify(tasks));
     }
 
-    // Function to load tasks from local storage
+    // Load tasks from localStorage
     function loadTasks() {
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        tasks.forEach(task => {
-            addTask(task.text, task.category, task.dueDate, task.priority, task.checked); // Pass the checked state
-        });
+        tasks = JSON.parse(localStorage.getItem('tasks')) || [];
+        renderTasks();
     }
 
-    // Function to update task in local storage
-    function updateTaskInLocalStorage(oldText, newText, category, dueDate, priority) {
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        tasks = tasks.map(task => {
-            if (task.text === oldText) {
-                return { text: newText, category: category, dueDate: dueDate, priority: priority, checked: task.checked };
-            }
-            return task;
-        });
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    // Function to remove task from local storage
-    function removeTaskFromLocalStorage(taskText) {
-        let tasks = JSON.parse(localStorage.getItem('tasks')) || [];
-        tasks = tasks.filter(task => task.text !== taskText);
-        localStorage.setItem('tasks', JSON.stringify(tasks));
-    }
-
-    // Dark Mode Toggle
+    // Dark mode toggle
     toggleDarkModeBtn.addEventListener('click', () => {
         document.body.classList.toggle('dark-mode');
+        toggleDarkModeBtn.textContent = document.body.classList.contains('dark-mode') ? '☀️' : '🌙';
+        localStorage.setItem('darkMode', document.body.classList.contains('dark-mode'));
+    });
+
+    // Load dark mode state
+    function loadDarkMode() {
+        const isDarkMode = localStorage.getItem('darkMode') === 'true';
+        if (isDarkMode) {
+            document.body.classList.add('dark-mode');
+            toggleDarkModeBtn.textContent = '☀️';
+        }
+    }
+
+    // Filter and sort handlers
+    filterCategorySelect.addEventListener('change', renderTasks);
+    sortTasksSelect.addEventListener('change', renderTasks);
+
+    // Clear all tasks
+    clearAllBtn.addEventListener('click', () => {
+        if (confirm('Are you sure you want to delete all tasks?')) {
+            tasks = [];
+            saveTasks();
+            renderTasks();
+        }
     });
 });
